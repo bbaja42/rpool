@@ -61,7 +61,8 @@ type Pool struct {
 
 // Acquire will pull a resource from the pool or create a new one if necessary.
 func (p *Pool) Acquire() (io.Closer, error) {
-	defer stats.BumpTime(p.Stats, "acquire.time").End()
+	t := stats.BumpTime(p.Stats, "acquire.time")
+	defer t.End()
 	p.manageOnce.Do(p.goManage)
 	r := make(chan io.Closer)
 	p.acquire <- r
